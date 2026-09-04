@@ -119,62 +119,6 @@ function Faturacao() {
         </div>
       </div>
 
-      <div className="mb-6 rounded-lg border border-border bg-card p-4">
-        <div className="flex flex-wrap items-end gap-4">
-          <div>
-            <div className="text-[11px] font-bold uppercase text-muted-foreground">
-              Contas certas até
-            </div>
-            <select
-              value={ateMes}
-              onChange={(e) => setAteMes(Number(e.target.value))}
-              className="mt-1 cursor-pointer rounded-md border border-border bg-background px-2 py-1.5 text-sm font-semibold outline-none focus:border-brand"
-            >
-              <option value={0}>Nenhum mês</option>
-              {MESES.map((m, i) => (
-                <option key={m} value={i + 1}>
-                  {m}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <div className="text-[11px] font-bold uppercase text-muted-foreground">
-              Valor devolvido
-            </div>
-            <input
-              type="number"
-              step="0.01"
-              value={valorCertas}
-              onChange={(e) => setValorCertas(e.target.value)}
-              placeholder="0,00"
-              className="mt-1 w-32 rounded-md border border-border bg-background px-2 py-1.5 text-sm font-semibold outline-none focus:border-brand"
-            />
-          </div>
-          <div className="min-w-[200px] flex-1">
-            <div className="text-[11px] font-bold uppercase text-muted-foreground">Nota</div>
-            <input
-              value={notaCertas}
-              onChange={(e) => setNotaCertas(e.target.value)}
-              placeholder="Ex.: percentagem devolvida de Jan a Abr"
-              className="mt-1 w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm outline-none focus:border-brand"
-            />
-          </div>
-          <button
-            onClick={guardar}
-            disabled={gravarCertas.isPending}
-            className="cursor-pointer rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground hover:opacity-90"
-          >
-            Guardar
-          </button>
-        </div>
-        <p className="mt-3 text-sm text-muted-foreground">
-          {ateMes > 0
-            ? `Contas certas até ${MESES[ateMes - 1]} de ${ano}.`
-            : "Ainda não há meses com contas certas neste ano."}
-        </p>
-      </div>
-
       {editar && (
         <p className="mb-4 text-sm text-muted-foreground">
           Escreva o total faturado de cada mês. Deixe em branco para voltar ao valor calculado
@@ -246,6 +190,62 @@ function Faturacao() {
             </button>
           );
         })}
+      </div>
+
+      <div className="mt-6 rounded-lg border border-border bg-card p-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <div>
+            <div className="text-[11px] font-bold uppercase text-muted-foreground">
+              Contas certas até
+            </div>
+            <select
+              value={ateMes}
+              onChange={(e) => setAteMes(Number(e.target.value))}
+              className="mt-1 cursor-pointer rounded-md border border-border bg-background px-2 py-1.5 text-sm font-semibold outline-none focus:border-brand"
+            >
+              <option value={0}>Nenhum mês</option>
+              {MESES.map((m, i) => (
+                <option key={m} value={i + 1}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold uppercase text-muted-foreground">
+              Valor devolvido
+            </div>
+            <input
+              type="number"
+              step="0.01"
+              value={valorCertas}
+              onChange={(e) => setValorCertas(e.target.value)}
+              placeholder="0,00"
+              className="mt-1 w-32 rounded-md border border-border bg-background px-2 py-1.5 text-sm font-semibold outline-none focus:border-brand"
+            />
+          </div>
+          <div className="min-w-[200px] flex-1">
+            <div className="text-[11px] font-bold uppercase text-muted-foreground">Nota</div>
+            <input
+              value={notaCertas}
+              onChange={(e) => setNotaCertas(e.target.value)}
+              placeholder="Ex.: percentagem devolvida de Jan a Abr"
+              className="mt-1 w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm outline-none focus:border-brand"
+            />
+          </div>
+          <button
+            onClick={guardar}
+            disabled={gravarCertas.isPending}
+            className="cursor-pointer rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground hover:opacity-90"
+          >
+            Guardar
+          </button>
+        </div>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {ateMes > 0
+            ? `Contas certas até ${MESES[ateMes - 1]} de ${ano}.`
+            : "Ainda não há meses com contas certas neste ano."}
+        </p>
       </div>
     </section>
   );
