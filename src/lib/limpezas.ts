@@ -170,3 +170,19 @@ export async function guardarNota(
     );
   if (error) throw error;
 }
+
+export async function renomearFornecedor(id: string, nome: string) {
+  const { error } = await supabase.from("fornecedores").update({ nome }).eq("id", id);
+  if (error) throw error;
+}
+
+export async function removerFornecedor(id: string) {
+  const limpezas = await supabase.from("limpezas").delete().eq("fornecedor_id", id);
+  if (limpezas.error) throw limpezas.error;
+  const notas = await supabase.from("notas_mensais").delete().eq("fornecedor_id", id);
+  if (notas.error) throw notas.error;
+  const predios = await supabase.from("predios").delete().eq("fornecedor_id", id);
+  if (predios.error) throw predios.error;
+  const { error } = await supabase.from("fornecedores").delete().eq("id", id);
+  if (error) throw error;
+}
