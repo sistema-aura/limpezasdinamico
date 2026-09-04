@@ -60,3 +60,101 @@ function Inicio() {
     </Shell>
   );
 }
+
+function Cartao({ fornecedor }: { fornecedor: Fornecedor }) {
+  const queryClient = useQueryClient();
+  const [aEditar, setAEditar] = useState(false);
+  const [nome, setNome] = useState(fornecedor.nome);
+
+  const invalidar = () =>
+    queryClient.invalidateQueries({ queryKey: ["fornecedores"] });
+
+  const guardar = useMutation({
+    mutationFn: () => renomearFornecedor(fornecedor.id, nome.trim()),
+    onSuccess: () => {
+      setAEditar(false);
+      invalidar();
+    },
+  });
+
+  const apagar = useMutation({
+    mutationFn: () => removerFornecedor(fornecedor.id),
+    onSuccess: invalidar,
+  });
+
+  if (aEditar) {
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (nome.trim()) guardar.mutate();
+        }}
+        className="rounded-xl border border-brand/40 bg-card p-5 shadow-sm"
+      >
+        <input
+          autoFocus
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          className="w-full rounded-lg border border-border bg-secondary px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand/20"
+        />
+        <div className="mt-3 flex gap-2">
+          <button
+            type="submit"
+            className="flex-1 cursor-pointer rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-brand-foreground"
+          >
+            Guardar
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setNome(fornecedor.nome);
+              setAEditar(false);
+            }}
+            className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-5 shadow-sm transition-colors hover:border-brand/40">
+      <Link
+        to="/fornecedor/$id"
+        params={{ id: fornecedor.id }}
+        search={{ ano: undefined, mes: undefined }}
+        className="block"
+      >
+        <div className="flex items-center gap-3">
+          <span className="size-2 rounded-full bg-brand" />
+          <span className="font-semibold">{fornecedor.nome}</span>
+        </div>
+        <p className="mt-2 text-sm text-muted-foreground">Ver prédios e pagamentos</p>
+      </Link>
+      <div className="mt-4 flex gap-2 border-t border-border pt-3">
+        <button
+          onClick={() => setAEditar(true)}
+          className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary"
+        >
+          Editar nome
+        </button>
+        <button
+          disabled={apagar.isPending}
+          onClick={() => {
+            if (
+              window.confirm(
+                `Apagar o fornecedor "${fornecedor.nome}"? Perde os prédios, limpezas e observações deste fornecedor.`,
+              )
+            )
+              apagar.mutate();
+          }}
+          className="cursor-pointer rounded-lg border border-unpaid/30 bg-unpaid/10 px-3 py-1.5 text-xs font-medium text-unpaid-strong transition-colors hover:bg-unpaid/20"
+        >
+          Apagar
+        </button>
+      </div>
+    </div>
+  );
+}
