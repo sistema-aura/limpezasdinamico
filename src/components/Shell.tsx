@@ -8,6 +8,7 @@ const SECCOES = [
   { to: "/fornecedor/$id", label: "Limpezas do mês", exact: true },
   { to: "/fornecedor/$id/predios", label: "Prédios", exact: false },
   { to: "/fornecedor/$id/transferencias", label: "Transferências a fazer", exact: false },
+  { to: "/fornecedor/$id/numerario", label: "Numerário a pagar", exact: false },
   { to: "/fornecedor/$id/observacoes", label: "Observações", exact: false },
   { to: "/fornecedor/$id/faturacao", label: "Resumo de faturação", exact: false },
 ] as const;
