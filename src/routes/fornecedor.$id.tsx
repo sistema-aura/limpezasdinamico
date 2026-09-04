@@ -177,6 +177,13 @@ function PaginaFornecedor() {
 
   const anos = [hoje.getFullYear() + 1, hoje.getFullYear(), hoje.getFullYear() - 1, hoje.getFullYear() - 2];
 
+  function proximoEstado(atual: Estado, padrao: Pagamento): Estado {
+    const outro: Pagamento = padrao === "transferencia" ? "numerario" : "transferencia";
+    if (atual === "pendente") return padrao;
+    if (atual === padrao) return outro;
+    return "pendente";
+  }
+
   return (
     <Shell>
       <header className="flex flex-col items-start justify-between gap-4 border-b border-border bg-card px-8 py-4 sm:flex-row sm:items-center">
