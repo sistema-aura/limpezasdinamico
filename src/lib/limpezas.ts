@@ -219,3 +219,40 @@ export async function listarLimpezasDoMes(ano: number, mes: number) {
   if (error) throw error;
   return (data ?? []).map((l) => ({ ...l, valor: Number(l.valor) })) as Limpeza[];
 }
+
+export type FaturacaoMes = { ano: number; mes: number; valor: number };
+
+export async function listarFaturacao(fornecedorId: string, ano: number) {
+  const { data, error } = await supabase
+    .from("faturacao_mensal")
+    .select("ano, mes, valor")
+    .eq("fornecedor_id", fornecedorId)
+    .eq("ano", ano);
+  if (error) throw error;
+  return (data ?? []).map((f) => ({ ...f, valor: Number(f.valor) })) as FaturacaoMes[];
+}
+
+export async function guardarFaturacao(
+  fornecedorId: string,
+  ano: number,
+  mes: number,
+  valor: number,
+) {
+  const { error } = await supabase
+    .from("faturacao_mensal")
+    .upsert(
+      { fornecedor_id: fornecedorId, ano, mes, valor },
+      { onConflict: "fornecedor_id,ano,mes" },
+    );
+  if (error) throw error;
+}
+
+export async function apagarFaturacao(fornecedorId: string, ano: number, mes: number) {
+  const { error } = await supabase
+    .from("faturacao_mensal")
+    .delete()
+    .eq("fornecedor_id", fornecedorId)
+    .eq("ano", ano)
+    .eq("mes", mes);
+  if (error) throw error;
+}
