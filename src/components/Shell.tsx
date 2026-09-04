@@ -88,7 +88,10 @@ export function Shell({ children }: { children: ReactNode }) {
                 key={s.to}
                 to={s.to}
                 params={{ id: atual.id }}
-                search={(prev) => prev}
+                search={(prev: { ano?: number; mes?: number }) => ({
+                  ano: prev.ano,
+                  mes: prev.mes,
+                })}
                 activeOptions={{ exact: s.exact, includeSearch: false }}
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-secondary data-[status=active]:bg-brand/10 data-[status=active]:font-medium data-[status=active]:text-brand"
               >
