@@ -74,7 +74,7 @@ export function useDadosFornecedor(id: string, ano: number, mes: number) {
     return { total, transferencia, numerario, falta };
   }, [linhas]);
 
-  return { fornecedor, predios, limpezas, linhas, porTransferir, totais };
+  return { fornecedor, predios, limpezas, linhas, porTransferir, porNumerario, totais };
 }
 
 export const ESTADO_CLASSE: Record<Estado, string> = {
