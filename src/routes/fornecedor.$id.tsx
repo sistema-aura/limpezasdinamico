@@ -119,9 +119,8 @@ function PaginaFornecedor() {
   }, [linhas]);
 
   const faturacaoAnual = useMemo(() => {
-    const mapa = new Map<string, number>();
-    for (const p of predios) mapa.set(p.id, p.valor);
     return MESES_CURTOS.map((_, i) => {
+
       const doMes = limpezas.filter((l) => l.mes === i + 1);
       if (doMes.length === 0) return null;
       return doMes.reduce((s, l) => s + l.valor, 0);
