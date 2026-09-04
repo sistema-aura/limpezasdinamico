@@ -388,7 +388,7 @@ function PaginaFornecedor() {
                           gravar.mutate({
                             predio_id: l.predio.id,
                             valor: l.valor,
-                            estado: l.estado,
+                            estado: l.pago ? l.pagamento : "pendente",
                             observacoes: e.target.value,
                           });
                       }}
