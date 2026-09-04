@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      contas_certas: {
+        Row: {
+          ano: number
+          ate_mes: number
+          created_at: string
+          fornecedor_id: string
+          id: string
+          nota: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          ano: number
+          ate_mes?: number
+          created_at?: string
+          fornecedor_id: string
+          id?: string
+          nota?: string
+          updated_at?: string
+          valor?: number
+        }
+        Update: {
+          ano?: number
+          ate_mes?: number
+          created_at?: string
+          fornecedor_id?: string
+          id?: string
+          nota?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contas_certas_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       faturacao_mensal: {
         Row: {
           ano: number
