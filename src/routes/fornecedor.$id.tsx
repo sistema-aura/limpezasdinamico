@@ -184,12 +184,32 @@ function PaginaFornecedor() {
 
   const anos = [hoje.getFullYear() + 1, hoje.getFullYear(), hoje.getFullYear() - 1, hoje.getFullYear() - 2];
 
-  function proximoEstado(atual: Estado, padrao: Pagamento): Estado {
-    const outro: Pagamento = padrao === "transferencia" ? "numerario" : "transferencia";
-    if (atual === "pendente") return padrao;
-    if (atual === padrao) return outro;
-    return "pendente";
-  }
+  const mudarPagamento = useMutation({
+    mutationFn: async (v: {
+      predioId: string;
+      pagamento: Pagamento;
+      pago: boolean;
+      valor: number;
+      observacoes: string;
+    }) => {
+      await atualizarPagamentoPredio(v.predioId, v.pagamento);
+      if (v.pago) {
+        await guardarLimpeza({
+          fornecedor_id: id,
+          predio_id: v.predioId,
+          ano,
+          mes,
+          valor: v.valor,
+          estado: v.pagamento,
+          observacoes: v.observacoes,
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["predios", id] });
+      queryClient.invalidateQueries({ queryKey: ["limpezas", id, ano] });
+    },
+  });
 
   return (
     <Shell>
