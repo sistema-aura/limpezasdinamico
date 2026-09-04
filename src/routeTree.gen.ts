@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FornecedorIdRouteImport } from './routes/fornecedor.$id'
 import { Route as FornecedorIdIndexRouteImport } from './routes/fornecedor.$id.index'
+import { Route as FornecedorIdFaturacaoRouteImport } from './routes/fornecedor.$id.faturacao'
 import { Route as FornecedorIdObservacoesRouteImport } from './routes/fornecedor.$id.observacoes'
 import { Route as FornecedorIdPrediosRouteImport } from './routes/fornecedor.$id.predios'
 import { Route as FornecedorIdTransferenciasRouteImport } from './routes/fornecedor.$id.transferencias'
@@ -29,6 +30,11 @@ const FornecedorIdRoute = FornecedorIdRouteImport.update({
 const FornecedorIdIndexRoute = FornecedorIdIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => FornecedorIdRoute,
+} as any)
+const FornecedorIdFaturacaoRoute = FornecedorIdFaturacaoRouteImport.update({
+  id: '/faturacao',
+  path: '/faturacao',
   getParentRoute: () => FornecedorIdRoute,
 } as any)
 const FornecedorIdObservacoesRoute = FornecedorIdObservacoesRouteImport.update({
@@ -51,6 +57,7 @@ const FornecedorIdTransferenciasRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
+  '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
   '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
   '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
   '/fornecedor/$id/transferencias': typeof FornecedorIdTransferenciasRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
   '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
   '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
   '/fornecedor/$id/transferencias': typeof FornecedorIdTransferenciasRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
+  '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
   '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
   '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
   '/fornecedor/$id/transferencias': typeof FornecedorIdTransferenciasRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/fornecedor/$id'
+    | '/fornecedor/$id/faturacao'
     | '/fornecedor/$id/observacoes'
     | '/fornecedor/$id/predios'
     | '/fornecedor/$id/transferencias'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/fornecedor/$id/faturacao'
     | '/fornecedor/$id/observacoes'
     | '/fornecedor/$id/predios'
     | '/fornecedor/$id/transferencias'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/fornecedor/$id'
+    | '/fornecedor/$id/faturacao'
     | '/fornecedor/$id/observacoes'
     | '/fornecedor/$id/predios'
     | '/fornecedor/$id/transferencias'
@@ -126,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FornecedorIdIndexRouteImport
       parentRoute: typeof FornecedorIdRoute
     }
+    '/fornecedor/$id/faturacao': {
+      id: '/fornecedor/$id/faturacao'
+      path: '/faturacao'
+      fullPath: '/fornecedor/$id/faturacao'
+      preLoaderRoute: typeof FornecedorIdFaturacaoRouteImport
+      parentRoute: typeof FornecedorIdRoute
+    }
     '/fornecedor/$id/observacoes': {
       id: '/fornecedor/$id/observacoes'
       path: '/observacoes'
@@ -151,6 +170,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface FornecedorIdRouteChildren {
+  FornecedorIdFaturacaoRoute: typeof FornecedorIdFaturacaoRoute
   FornecedorIdObservacoesRoute: typeof FornecedorIdObservacoesRoute
   FornecedorIdPrediosRoute: typeof FornecedorIdPrediosRoute
   FornecedorIdTransferenciasRoute: typeof FornecedorIdTransferenciasRoute
@@ -158,6 +178,7 @@ interface FornecedorIdRouteChildren {
 }
 
 const FornecedorIdRouteChildren: FornecedorIdRouteChildren = {
+  FornecedorIdFaturacaoRoute: FornecedorIdFaturacaoRoute,
   FornecedorIdObservacoesRoute: FornecedorIdObservacoesRoute,
   FornecedorIdPrediosRoute: FornecedorIdPrediosRoute,
   FornecedorIdTransferenciasRoute: FornecedorIdTransferenciasRoute,
