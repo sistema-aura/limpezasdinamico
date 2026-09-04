@@ -46,6 +46,8 @@ export function Shell({ children }: { children: ReactNode }) {
                 key={f.id}
                 to="/fornecedor/$id"
                 params={{ id: f.id }}
+                search={{ ano: undefined, mes: undefined }}
+
                 className={
                   ativo
                     ? "flex items-center gap-3 rounded-lg bg-brand/10 px-3 py-2 font-medium text-brand"
