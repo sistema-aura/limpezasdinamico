@@ -55,6 +55,11 @@ export function useDadosFornecedor(id: string, ano: number, mes: number) {
     [linhas],
   );
 
+  const porNumerario = useMemo(
+    () => linhas.filter((l) => l.pagamento === "numerario" && !l.pago),
+    [linhas],
+  );
+
   const totais = useMemo(() => {
     let total = 0;
     let transferencia = 0;
