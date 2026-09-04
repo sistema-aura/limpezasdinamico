@@ -5,6 +5,7 @@ import { Shell } from "@/components/Shell";
 import {
   ESTADO_LABEL,
   MESES,
+  atualizarPagamentoPredio,
   MESES_CURTOS,
   criarPredio,
   euro,
