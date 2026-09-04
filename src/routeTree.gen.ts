@@ -11,6 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FornecedorIdRouteImport } from './routes/fornecedor.$id'
+import { Route as FornecedorIdIndexRouteImport } from './routes/fornecedor.$id.index'
+import { Route as FornecedorIdFaturacaoRouteImport } from './routes/fornecedor.$id.faturacao'
+import { Route as FornecedorIdObservacoesRouteImport } from './routes/fornecedor.$id.observacoes'
+import { Route as FornecedorIdPrediosRouteImport } from './routes/fornecedor.$id.predios'
+import { Route as FornecedorIdTransferenciasRouteImport } from './routes/fornecedor.$id.transferencias'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +27,92 @@ const FornecedorIdRoute = FornecedorIdRouteImport.update({
   path: '/fornecedor/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FornecedorIdIndexRoute = FornecedorIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FornecedorIdRoute,
+} as any)
+const FornecedorIdFaturacaoRoute = FornecedorIdFaturacaoRouteImport.update({
+  id: '/faturacao',
+  path: '/faturacao',
+  getParentRoute: () => FornecedorIdRoute,
+} as any)
+const FornecedorIdObservacoesRoute = FornecedorIdObservacoesRouteImport.update({
+  id: '/observacoes',
+  path: '/observacoes',
+  getParentRoute: () => FornecedorIdRoute,
+} as any)
+const FornecedorIdPrediosRoute = FornecedorIdPrediosRouteImport.update({
+  id: '/predios',
+  path: '/predios',
+  getParentRoute: () => FornecedorIdRoute,
+} as any)
+const FornecedorIdTransferenciasRoute =
+  FornecedorIdTransferenciasRouteImport.update({
+    id: '/transferencias',
+    path: '/transferencias',
+    getParentRoute: () => FornecedorIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/fornecedor/$id': typeof FornecedorIdRoute
+  '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
+  '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
+  '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
+  '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
+  '/fornecedor/$id/transferencias': typeof FornecedorIdTransferenciasRoute
+  '/fornecedor/$id/': typeof FornecedorIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/fornecedor/$id': typeof FornecedorIdRoute
+  '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
+  '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
+  '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
+  '/fornecedor/$id/transferencias': typeof FornecedorIdTransferenciasRoute
+  '/fornecedor/$id': typeof FornecedorIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/fornecedor/$id': typeof FornecedorIdRoute
+  '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
+  '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
+  '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
+  '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
+  '/fornecedor/$id/transferencias': typeof FornecedorIdTransferenciasRoute
+  '/fornecedor/$id/': typeof FornecedorIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/fornecedor/$id'
+  fullPaths:
+    | '/'
+    | '/fornecedor/$id'
+    | '/fornecedor/$id/faturacao'
+    | '/fornecedor/$id/observacoes'
+    | '/fornecedor/$id/predios'
+    | '/fornecedor/$id/transferencias'
+    | '/fornecedor/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/fornecedor/$id'
-  id: '__root__' | '/' | '/fornecedor/$id'
+  to:
+    | '/'
+    | '/fornecedor/$id/faturacao'
+    | '/fornecedor/$id/observacoes'
+    | '/fornecedor/$id/predios'
+    | '/fornecedor/$id/transferencias'
+    | '/fornecedor/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/fornecedor/$id'
+    | '/fornecedor/$id/faturacao'
+    | '/fornecedor/$id/observacoes'
+    | '/fornecedor/$id/predios'
+    | '/fornecedor/$id/transferencias'
+    | '/fornecedor/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  FornecedorIdRoute: typeof FornecedorIdRoute
+  FornecedorIdRoute: typeof FornecedorIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +131,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FornecedorIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fornecedor/$id/': {
+      id: '/fornecedor/$id/'
+      path: '/'
+      fullPath: '/fornecedor/$id/'
+      preLoaderRoute: typeof FornecedorIdIndexRouteImport
+      parentRoute: typeof FornecedorIdRoute
+    }
+    '/fornecedor/$id/faturacao': {
+      id: '/fornecedor/$id/faturacao'
+      path: '/faturacao'
+      fullPath: '/fornecedor/$id/faturacao'
+      preLoaderRoute: typeof FornecedorIdFaturacaoRouteImport
+      parentRoute: typeof FornecedorIdRoute
+    }
+    '/fornecedor/$id/observacoes': {
+      id: '/fornecedor/$id/observacoes'
+      path: '/observacoes'
+      fullPath: '/fornecedor/$id/observacoes'
+      preLoaderRoute: typeof FornecedorIdObservacoesRouteImport
+      parentRoute: typeof FornecedorIdRoute
+    }
+    '/fornecedor/$id/predios': {
+      id: '/fornecedor/$id/predios'
+      path: '/predios'
+      fullPath: '/fornecedor/$id/predios'
+      preLoaderRoute: typeof FornecedorIdPrediosRouteImport
+      parentRoute: typeof FornecedorIdRoute
+    }
+    '/fornecedor/$id/transferencias': {
+      id: '/fornecedor/$id/transferencias'
+      path: '/transferencias'
+      fullPath: '/fornecedor/$id/transferencias'
+      preLoaderRoute: typeof FornecedorIdTransferenciasRouteImport
+      parentRoute: typeof FornecedorIdRoute
+    }
   }
 }
 
+interface FornecedorIdRouteChildren {
+  FornecedorIdFaturacaoRoute: typeof FornecedorIdFaturacaoRoute
+  FornecedorIdObservacoesRoute: typeof FornecedorIdObservacoesRoute
+  FornecedorIdPrediosRoute: typeof FornecedorIdPrediosRoute
+  FornecedorIdTransferenciasRoute: typeof FornecedorIdTransferenciasRoute
+  FornecedorIdIndexRoute: typeof FornecedorIdIndexRoute
+}
+
+const FornecedorIdRouteChildren: FornecedorIdRouteChildren = {
+  FornecedorIdFaturacaoRoute: FornecedorIdFaturacaoRoute,
+  FornecedorIdObservacoesRoute: FornecedorIdObservacoesRoute,
+  FornecedorIdPrediosRoute: FornecedorIdPrediosRoute,
+  FornecedorIdTransferenciasRoute: FornecedorIdTransferenciasRoute,
+  FornecedorIdIndexRoute: FornecedorIdIndexRoute,
+}
+
+const FornecedorIdRouteWithChildren = FornecedorIdRoute._addFileChildren(
+  FornecedorIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  FornecedorIdRoute: FornecedorIdRoute,
+  FornecedorIdRoute: FornecedorIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
