@@ -77,6 +77,20 @@ export function Shell({ children }: { children: ReactNode }) {
               )}
             </div>
           )}
+          <div className="mt-3 space-y-1">
+            <Link
+              to="/em-falta"
+              className="block rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground data-[status=active]:bg-brand/10 data-[status=active]:font-medium data-[status=active]:text-brand"
+            >
+              Pagamentos em falta
+            </Link>
+            <Link
+              to="/fornecedores"
+              className="block rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground data-[status=active]:bg-brand/10 data-[status=active]:font-medium data-[status=active]:text-brand"
+            >
+              Listagem de fornecedores
+            </Link>
+          </div>
         </div>
 
         {atual && (
