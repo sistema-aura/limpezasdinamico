@@ -1,15 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDadosFornecedor } from "@/lib/dados";
 import { usePeriodo } from "./fornecedor.$id";
 import {
+  MESES,
   MESES_CURTOS,
   apagarFaturacao,
   euro,
   guardarFaturacao,
   listarFaturacao,
+  obterContasCertas,
+  guardarContasCertas,
 } from "@/lib/limpezas";
+
 
 export const Route = createFileRoute("/fornecedor/$id/faturacao")({
   head: () => ({
