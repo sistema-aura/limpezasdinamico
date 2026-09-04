@@ -130,17 +130,27 @@ function Predios() {
         </button>
       </form>
 
-      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-border bg-secondary font-medium text-muted-foreground">
-            <tr>
-              <th className="px-6 py-4">Cód</th>
-              <th className="px-6 py-4">Morada</th>
-              <th className="px-6 py-4 text-right">Valor base</th>
-              <th className="px-6 py-4">Pagamento habitual</th>
-              <th className="px-6 py-4"></th>
-            </tr>
-          </thead>
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+          <p>
+            <span className="font-bold text-foreground">{predios.length}</span> prédio
+            {predios.length === 1 ? "" : "s"}
+          </p>
+          <p>
+            Valor base total: <span className="font-bold text-foreground">{euro(predios.reduce((s, p) => s + (p.valor || 0), 0))}</span>
+          </p>
+        </div>
+        <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-border bg-secondary font-medium text-muted-foreground">
+              <tr>
+                <th className="px-6 py-4">Cód</th>
+                <th className="px-6 py-4">Morada</th>
+                <th className="px-6 py-4 text-right">Valor base</th>
+                <th className="px-6 py-4">Pagamento habitual</th>
+                <th className="px-6 py-4"></th>
+              </tr>
+            </thead>
           <tbody className="divide-y divide-border">
             {predios.map((p) => (
               <tr key={p.id} className="group hover:bg-secondary/40">
