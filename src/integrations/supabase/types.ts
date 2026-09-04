@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      faturacao_mensal: {
+        Row: {
+          ano: number
+          created_at: string
+          fornecedor_id: string
+          id: string
+          mes: number
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          ano: number
+          created_at?: string
+          fornecedor_id: string
+          id?: string
+          mes: number
+          updated_at?: string
+          valor?: number
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          fornecedor_id?: string
+          id?: string
+          mes?: number
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faturacao_mensal_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fornecedores: {
         Row: {
           created_at: string
