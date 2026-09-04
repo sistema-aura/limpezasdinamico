@@ -386,7 +386,7 @@ function PaginaFornecedor() {
           <h2 className="mb-6 text-lg font-bold">Resumo de Faturação Mensal ({ano})</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-12">
             {MESES_CURTOS.map((m, i) => {
-              const v = faturacaoAnual[i];
+              const v = faturacaoAnual[i] ?? null;
               const atual = mes === i + 1;
               return (
                 <button
