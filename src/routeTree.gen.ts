@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FornecedorIdRouteImport } from './routes/fornecedor.$id'
 import { Route as FornecedorIdIndexRouteImport } from './routes/fornecedor.$id.index'
+import { Route as FornecedorIdPrediosRouteImport } from './routes/fornecedor.$id.predios'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,28 +29,42 @@ const FornecedorIdIndexRoute = FornecedorIdIndexRouteImport.update({
   path: '/',
   getParentRoute: () => FornecedorIdRoute,
 } as any)
+const FornecedorIdPrediosRoute = FornecedorIdPrediosRouteImport.update({
+  id: '/predios',
+  path: '/predios',
+  getParentRoute: () => FornecedorIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
+  '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
   '/fornecedor/$id/': typeof FornecedorIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
   '/fornecedor/$id': typeof FornecedorIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
+  '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
   '/fornecedor/$id/': typeof FornecedorIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/fornecedor/$id' | '/fornecedor/$id/'
+  fullPaths:
+    '/' | '/fornecedor/$id' | '/fornecedor/$id/predios' | '/fornecedor/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/fornecedor/$id'
-  id: '__root__' | '/' | '/fornecedor/$id' | '/fornecedor/$id/'
+  to: '/' | '/fornecedor/$id/predios' | '/fornecedor/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/fornecedor/$id'
+    | '/fornecedor/$id/predios'
+    | '/fornecedor/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -80,14 +95,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FornecedorIdIndexRouteImport
       parentRoute: typeof FornecedorIdRoute
     }
+    '/fornecedor/$id/predios': {
+      id: '/fornecedor/$id/predios'
+      path: '/predios'
+      fullPath: '/fornecedor/$id/predios'
+      preLoaderRoute: typeof FornecedorIdPrediosRouteImport
+      parentRoute: typeof FornecedorIdRoute
+    }
   }
 }
 
 interface FornecedorIdRouteChildren {
+  FornecedorIdPrediosRoute: typeof FornecedorIdPrediosRoute
   FornecedorIdIndexRoute: typeof FornecedorIdIndexRoute
 }
 
 const FornecedorIdRouteChildren: FornecedorIdRouteChildren = {
+  FornecedorIdPrediosRoute: FornecedorIdPrediosRoute,
   FornecedorIdIndexRoute: FornecedorIdIndexRoute,
 }
 
