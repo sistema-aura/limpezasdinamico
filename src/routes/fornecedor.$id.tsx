@@ -16,6 +16,7 @@ import {
   obterNota,
   removerPredio,
   type Estado,
+  type Pagamento,
 } from "@/lib/limpezas";
 
 type Busca = { ano: number | undefined; mes: number | undefined };
