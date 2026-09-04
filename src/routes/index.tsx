@@ -1,7 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { Shell } from "@/components/Shell";
-import { listarFornecedores } from "@/lib/limpezas";
+import {
+  listarFornecedores,
+  removerFornecedor,
+  renomearFornecedor,
+  type Fornecedor,
+} from "@/lib/limpezas";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
