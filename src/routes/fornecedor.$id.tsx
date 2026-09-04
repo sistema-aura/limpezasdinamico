@@ -155,6 +155,7 @@ function PaginaFornecedor() {
   const [codigo, setCodigo] = useState("");
   const [morada, setMorada] = useState("");
   const [valor, setValor] = useState("");
+  const [pagamentoPadrao, setPagamentoPadrao] = useState<Pagamento>("transferencia");
 
   const adicionar = useMutation({
     mutationFn: () =>
@@ -163,11 +164,13 @@ function PaginaFornecedor() {
         codigo: codigo.trim(),
         morada: morada.trim(),
         valor: Number(valor.replace(",", ".")) || 0,
+        pagamento_padrao: pagamentoPadrao,
       }),
     onSuccess: () => {
       setCodigo("");
       setMorada("");
       setValor("");
+      setPagamentoPadrao("transferencia");
       queryClient.invalidateQueries({ queryKey: ["predios", id] });
     },
   });
