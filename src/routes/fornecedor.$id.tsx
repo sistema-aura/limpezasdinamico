@@ -18,13 +18,14 @@ import {
   type Estado,
 } from "@/lib/limpezas";
 
-type Busca = { ano?: number; mes?: number };
+type Busca = { ano: number | undefined; mes: number | undefined };
 
 export const Route = createFileRoute("/fornecedor/$id")({
   validateSearch: (search: Record<string, unknown>): Busca => ({
     ano: search["ano"] ? Number(search["ano"]) : undefined,
     mes: search["mes"] ? Number(search["mes"]) : undefined,
   }),
+
   head: () => ({
     meta: [
       { title: "Fornecedor — Limpeza Dinâmico" },
