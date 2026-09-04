@@ -121,6 +121,14 @@ export async function criarPredio(input: {
   if (error) throw error;
 }
 
+export async function atualizarPagamentoPredio(id: string, pagamento: Pagamento) {
+  const { error } = await supabase
+    .from("predios")
+    .update({ pagamento_padrao: pagamento })
+    .eq("id", id);
+  if (error) throw error;
+}
+
 export async function removerPredio(id: string) {
   const { error } = await supabase.from("predios").update({ ativo: false }).eq("id", id);
   if (error) throw error;
