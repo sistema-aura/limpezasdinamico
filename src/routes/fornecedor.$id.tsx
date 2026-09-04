@@ -336,7 +336,8 @@ function PaginaFornecedor() {
                 <th className="px-6 py-4">Cód</th>
                 <th className="px-6 py-4">Morada</th>
                 <th className="px-6 py-4 text-right">Valor</th>
-                <th className="px-6 py-4">Estado / Pagamento</th>
+                <th className="px-6 py-4">Pagamento habitual</th>
+                <th className="px-6 py-4">Estado</th>
                 <th className="px-6 py-4">Observações</th>
                 <th className="px-6 py-4"></th>
               </tr>
