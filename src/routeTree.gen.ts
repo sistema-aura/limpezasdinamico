@@ -10,33 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FornecedorIdRouteImport } from './routes/fornecedor.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FornecedorIdRoute = FornecedorIdRouteImport.update({
+  id: '/fornecedor/$id',
+  path: '/fornecedor/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/fornecedor/$id': typeof FornecedorIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/fornecedor/$id': typeof FornecedorIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/fornecedor/$id': typeof FornecedorIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/fornecedor/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/fornecedor/$id'
+  id: '__root__' | '/' | '/fornecedor/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FornecedorIdRoute: typeof FornecedorIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +58,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fornecedor/$id': {
+      id: '/fornecedor/$id'
+      path: '/fornecedor/$id'
+      fullPath: '/fornecedor/$id'
+      preLoaderRoute: typeof FornecedorIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FornecedorIdRoute: FornecedorIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
