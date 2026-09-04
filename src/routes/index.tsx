@@ -47,20 +47,9 @@ function Inicio() {
 
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {fornecedores.map((f) => (
-            <Link
-              key={f.id}
-              to="/fornecedor/$id"
-              params={{ id: f.id }}
-              search={{ ano: undefined, mes: undefined }}
-              className="rounded-xl border border-border bg-card p-5 shadow-sm transition-colors hover:border-brand/40"
-            >
-              <div className="flex items-center gap-3">
-                <span className="size-2 rounded-full bg-brand" />
-                <span className="font-semibold">{f.nome}</span>
-              </div>
-              <p className="mt-2 text-sm text-muted-foreground">Ver prédios e pagamentos</p>
-            </Link>
+            <Cartao key={f.id} fornecedor={f} />
           ))}
+
           {!isLoading && fornecedores.length === 0 && (
             <p className="text-sm text-muted-foreground">
               Ainda não há fornecedores. Use “+ Novo Fornecedor” na barra lateral.
