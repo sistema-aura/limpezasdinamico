@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Shell } from "@/components/Shell";
 import {
-  ESTADO_LABEL,
   MESES,
   atualizarPagamentoPredio,
   MESES_CURTOS,
@@ -429,7 +428,7 @@ function PaginaFornecedor() {
               ))}
               {linhas.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-6 py-10 text-center text-muted-foreground">
                     Ainda não há prédios. Adicione o primeiro acima.
                   </td>
                 </tr>
