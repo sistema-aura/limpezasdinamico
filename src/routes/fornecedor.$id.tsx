@@ -336,22 +336,24 @@ function PaginaFornecedor() {
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <select
-                      value={l.estado}
-                      onChange={(e) =>
+                    <button
+                      onClick={() => {
+                        const proximo = proximoEstado(l.estado, l.predio.pagamento_padrao);
                         gravar.mutate({
                           predio_id: l.predio.id,
                           valor: l.valor,
-                          estado: e.target.value as Estado,
+                          estado: proximo,
                           observacoes: l.observacoes,
-                        })
-                      }
-                      className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-medium outline-none ${ESTADO_CLASSE[l.estado]}`}
+                        });
+                      }}
+                      title={`Clique para mudar. Normal deste prédio: ${ESTADO_LABEL[l.predio.pagamento_padrao].toLowerCase()}`}
+                      className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-medium transition hover:opacity-80 ${ESTADO_CLASSE[l.estado]}`}
                     >
-                      <option value="pendente">{ESTADO_LABEL.pendente}</option>
-                      <option value="transferencia">{ESTADO_LABEL.transferencia}</option>
-                      <option value="numerario">{ESTADO_LABEL.numerario}</option>
-                    </select>
+                      {ESTADO_LABEL[l.estado]}
+                      {l.estado === l.predio.pagamento_padrao && (
+                        <span className="ml-1 opacity-70">(normal)</span>
+                      )}
+                    </button>
                   </td>
                   <td className="px-6 py-4">
                     <input
