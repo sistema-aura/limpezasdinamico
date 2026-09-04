@@ -237,6 +237,12 @@ function Faturacao() {
               <div className={atual ? "mt-1 font-bold text-brand" : "mt-1 font-bold"}>
                 {v === null ? "—" : euro(v)}
               </div>
+              {ateMes >= i + 1 && (
+                <div className="mt-1 text-[10px] font-bold uppercase text-transfer-strong">
+                  Conta certa
+                </div>
+              )}
+
             </button>
           );
         })}
