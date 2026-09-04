@@ -88,7 +88,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 key={s.to}
                 to={s.to}
                 params={{ id: atual.id }}
-                search={(prev: { ano?: number; mes?: number }) => ({
+                search={(prev: { ano?: number | undefined; mes?: number | undefined }) => ({
                   ano: prev.ano,
                   mes: prev.mes,
                 })}
