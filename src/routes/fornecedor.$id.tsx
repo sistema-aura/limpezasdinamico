@@ -335,7 +335,7 @@ function PaginaFornecedor() {
                           gravar.mutate({
                             predio_id: l.predio.id,
                             valor: v,
-                            estado: l.estado,
+                            estado: l.pago ? l.pagamento : "pendente",
                             observacoes: l.observacoes,
                           });
                       }}
@@ -343,23 +343,39 @@ function PaginaFornecedor() {
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <button
-                      onClick={() => {
-                        const proximo = proximoEstado(l.estado, l.predio.pagamento_padrao);
-                        gravar.mutate({
-                          predio_id: l.predio.id,
+                    <select
+                      value={l.pagamento}
+                      onChange={(e) => {
+                        const novo = e.target.value as Pagamento;
+                        mudarPagamento.mutate({
+                          predioId: l.predio.id,
+                          pagamento: novo,
+                          pago: l.pago,
                           valor: l.valor,
-                          estado: proximo,
                           observacoes: l.observacoes,
                         });
                       }}
-                      title={`Clique para mudar. Normal deste prédio: ${ESTADO_LABEL[l.predio.pagamento_padrao].toLowerCase()}`}
-                      className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-medium transition hover:opacity-80 ${ESTADO_CLASSE[l.estado]}`}
+                      className={`cursor-pointer rounded-full border px-2.5 py-1 text-xs font-medium outline-none ${ESTADO_CLASSE[l.pagamento]}`}
                     >
-                      {ESTADO_LABEL[l.estado]}
-                      {l.estado === l.predio.pagamento_padrao && (
-                        <span className="ml-1 opacity-70">(normal)</span>
-                      )}
+                      <option value="transferencia">Transferência</option>
+                      <option value="numerario">Numerário</option>
+                    </select>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() =>
+                        gravar.mutate({
+                          predio_id: l.predio.id,
+                          valor: l.valor,
+                          estado: l.pago ? "pendente" : l.pagamento,
+                          observacoes: l.observacoes,
+                        })
+                      }
+                      className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-medium transition hover:opacity-80 ${
+                        l.pago ? ESTADO_CLASSE[l.pagamento] : ESTADO_CLASSE.pendente
+                      }`}
+                    >
+                      {l.pago ? "Pago" : "Falta pagar"}
                     </button>
                   </td>
                   <td className="px-6 py-4">
