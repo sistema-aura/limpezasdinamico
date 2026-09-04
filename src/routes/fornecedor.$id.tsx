@@ -3,8 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Shell } from "@/components/Shell";
 import {
-  ESTADO_LABEL,
   MESES,
+  atualizarPagamentoPredio,
   MESES_CURTOS,
   criarPredio,
   euro,
@@ -95,14 +95,21 @@ function PaginaFornecedor() {
     () =>
       predios.map((p) => {
         const l = limpezas.find((x) => x.predio_id === p.id && x.mes === mes);
+        const estado = (l?.estado ?? "pendente") as Estado;
         return {
           predio: p,
           valor: l ? l.valor : p.valor,
-          estado: (l?.estado ?? "pendente") as Estado,
+          pagamento: p.pagamento_padrao,
+          pago: estado !== "pendente",
           observacoes: l?.observacoes ?? "",
         };
       }),
     [predios, limpezas, mes],
+  );
+
+  const porTransferir = useMemo(
+    () => linhas.filter((l) => l.pagamento === "transferencia" && !l.pago),
+    [linhas],
   );
 
   const totais = useMemo(() => {
@@ -112,9 +119,9 @@ function PaginaFornecedor() {
     let falta = 0;
     for (const l of linhas) {
       total += l.valor;
-      if (l.estado === "transferencia") transferencia += l.valor;
-      else if (l.estado === "numerario") numerario += l.valor;
-      else falta += l.valor;
+      if (!l.pago) falta += l.valor;
+      else if (l.pagamento === "transferencia") transferencia += l.valor;
+      else numerario += l.valor;
     }
     return { total, transferencia, numerario, falta };
   }, [linhas]);
@@ -177,12 +184,32 @@ function PaginaFornecedor() {
 
   const anos = [hoje.getFullYear() + 1, hoje.getFullYear(), hoje.getFullYear() - 1, hoje.getFullYear() - 2];
 
-  function proximoEstado(atual: Estado, padrao: Pagamento): Estado {
-    const outro: Pagamento = padrao === "transferencia" ? "numerario" : "transferencia";
-    if (atual === "pendente") return padrao;
-    if (atual === padrao) return outro;
-    return "pendente";
-  }
+  const mudarPagamento = useMutation({
+    mutationFn: async (v: {
+      predioId: string;
+      pagamento: Pagamento;
+      pago: boolean;
+      valor: number;
+      observacoes: string;
+    }) => {
+      await atualizarPagamentoPredio(v.predioId, v.pagamento);
+      if (v.pago) {
+        await guardarLimpeza({
+          fornecedor_id: id,
+          predio_id: v.predioId,
+          ano,
+          mes,
+          valor: v.valor,
+          estado: v.pagamento,
+          observacoes: v.observacoes,
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["predios", id] });
+      queryClient.invalidateQueries({ queryKey: ["limpezas", id, ano] });
+    },
+  });
 
   return (
     <Shell>
@@ -308,7 +335,8 @@ function PaginaFornecedor() {
                 <th className="px-6 py-4">Cód</th>
                 <th className="px-6 py-4">Morada</th>
                 <th className="px-6 py-4 text-right">Valor</th>
-                <th className="px-6 py-4">Estado / Pagamento</th>
+                <th className="px-6 py-4">Pagamento habitual</th>
+                <th className="px-6 py-4">Estado</th>
                 <th className="px-6 py-4">Observações</th>
                 <th className="px-6 py-4"></th>
               </tr>
@@ -328,7 +356,7 @@ function PaginaFornecedor() {
                           gravar.mutate({
                             predio_id: l.predio.id,
                             valor: v,
-                            estado: l.estado,
+                            estado: l.pago ? l.pagamento : "pendente",
                             observacoes: l.observacoes,
                           });
                       }}
@@ -336,23 +364,39 @@ function PaginaFornecedor() {
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <button
-                      onClick={() => {
-                        const proximo = proximoEstado(l.estado, l.predio.pagamento_padrao);
-                        gravar.mutate({
-                          predio_id: l.predio.id,
+                    <select
+                      value={l.pagamento}
+                      onChange={(e) => {
+                        const novo = e.target.value as Pagamento;
+                        mudarPagamento.mutate({
+                          predioId: l.predio.id,
+                          pagamento: novo,
+                          pago: l.pago,
                           valor: l.valor,
-                          estado: proximo,
                           observacoes: l.observacoes,
                         });
                       }}
-                      title={`Clique para mudar. Normal deste prédio: ${ESTADO_LABEL[l.predio.pagamento_padrao].toLowerCase()}`}
-                      className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-medium transition hover:opacity-80 ${ESTADO_CLASSE[l.estado]}`}
+                      className={`cursor-pointer rounded-full border px-2.5 py-1 text-xs font-medium outline-none ${ESTADO_CLASSE[l.pagamento]}`}
                     >
-                      {ESTADO_LABEL[l.estado]}
-                      {l.estado === l.predio.pagamento_padrao && (
-                        <span className="ml-1 opacity-70">(normal)</span>
-                      )}
+                      <option value="transferencia">Transferência</option>
+                      <option value="numerario">Numerário</option>
+                    </select>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() =>
+                        gravar.mutate({
+                          predio_id: l.predio.id,
+                          valor: l.valor,
+                          estado: l.pago ? "pendente" : l.pagamento,
+                          observacoes: l.observacoes,
+                        })
+                      }
+                      className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-medium transition hover:opacity-80 ${
+                        l.pago ? ESTADO_CLASSE[l.pagamento] : ESTADO_CLASSE.pendente
+                      }`}
+                    >
+                      {l.pago ? "Pago" : "Falta pagar"}
                     </button>
                   </td>
                   <td className="px-6 py-4">
@@ -365,7 +409,7 @@ function PaginaFornecedor() {
                           gravar.mutate({
                             predio_id: l.predio.id,
                             valor: l.valor,
-                            estado: l.estado,
+                            estado: l.pago ? l.pagamento : "pendente",
                             observacoes: e.target.value,
                           });
                       }}
@@ -384,7 +428,7 @@ function PaginaFornecedor() {
               ))}
               {linhas.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-muted-foreground">
+                  <td colSpan={7} className="px-6 py-10 text-center text-muted-foreground">
                     Ainda não há prédios. Adicione o primeiro acima.
                   </td>
                 </tr>
@@ -392,6 +436,58 @@ function PaginaFornecedor() {
             </tbody>
           </table>
         </div>
+
+        <section className="rounded-xl border border-transfer/30 bg-card p-6 shadow-sm print:border-0 print:shadow-none">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold">
+                Transferências a fazer — {MESES[mes - 1]} {ano}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {fornecedor?.nome} · prédios que se pagam por transferência e ainda estão por pagar
+              </p>
+            </div>
+            <button
+              onClick={() => window.print()}
+              className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm font-semibold hover:bg-secondary print:hidden"
+            >
+              Imprimir / PDF
+            </button>
+          </div>
+
+          {porTransferir.length === 0 ? (
+            <p className="mt-4 text-sm text-muted-foreground">
+              Não há transferências pendentes neste mês.
+            </p>
+          ) : (
+            <table className="mt-4 w-full text-left text-sm">
+              <thead className="border-b border-border text-xs uppercase text-muted-foreground">
+                <tr>
+                  <th className="py-2">Cód</th>
+                  <th className="py-2">Morada</th>
+                  <th className="py-2 text-right">Valor</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {porTransferir.map((l) => (
+                  <tr key={l.predio.id}>
+                    <td className="py-2 font-bold text-muted-foreground">{l.predio.codigo}</td>
+                    <td className="py-2">{l.predio.morada}</td>
+                    <td className="py-2 text-right font-semibold">{euro(l.valor)}</td>
+                  </tr>
+                ))}
+                <tr>
+                  <td className="py-2 font-bold" colSpan={2}>
+                    Total
+                  </td>
+                  <td className="py-2 text-right font-bold">
+                    {euro(porTransferir.reduce((s, l) => s + l.valor, 0))}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          )}
+        </section>
 
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
           <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
