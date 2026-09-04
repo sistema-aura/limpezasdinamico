@@ -25,16 +25,26 @@ function Faturacao() {
   const { id } = Route.useParams();
   const { ano, mes } = usePeriodo();
   const navigate = Route.useNavigate();
-  const { limpezas } = useDadosFornecedor(id, ano, mes);
+  const { limpezas, predios } = useDadosFornecedor(id, ano, mes);
 
   const porMes = useMemo(
     () =>
       MESES_CURTOS.map((_, i) => {
         const doMes = limpezas.filter((l) => l.mes === i + 1);
         if (doMes.length === 0) return null;
-        return doMes.reduce((s, l) => s + l.valor, 0);
+        // Total faturado do mês: todos os prédios (pagos ou não).
+        // Valor do registo do mês quando existe, senão o valor base do prédio.
+        const total = predios.reduce((s, p) => {
+          const l = doMes.find((x) => x.predio_id === p.id);
+          return s + (l ? l.valor : p.valor);
+        }, 0);
+        // Registos de prédios que já não estão activos continuam a contar.
+        const extra = doMes
+          .filter((l) => !predios.some((p) => p.id === l.predio_id))
+          .reduce((s, l) => s + l.valor, 0);
+        return total + extra;
       }),
-    [limpezas],
+    [limpezas, predios],
   );
 
   const totalAno = porMes.reduce<number>((s, v) => s + (v ?? 0), 0);
