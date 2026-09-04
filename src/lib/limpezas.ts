@@ -256,3 +256,28 @@ export async function apagarFaturacao(fornecedorId: string, ano: number, mes: nu
     .eq("mes", mes);
   if (error) throw error;
 }
+
+export type ContasCertas = { ate_mes: number; valor: number; nota: string };
+
+export async function obterContasCertas(fornecedorId: string, ano: number) {
+  const { data, error } = await supabase
+    .from("contas_certas")
+    .select("ate_mes, valor, nota")
+    .eq("fornecedor_id", fornecedorId)
+    .eq("ano", ano)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? ({ ...data, valor: Number(data.valor) } as ContasCertas) : null;
+}
+
+export async function guardarContasCertas(
+  fornecedorId: string,
+  ano: number,
+  dados: ContasCertas,
+) {
+  const { error } = await supabase
+    .from("contas_certas")
+    .upsert({ fornecedor_id: fornecedorId, ano, ...dados }, { onConflict: "fornecedor_id,ano" });
+  if (error) throw error;
+}
+

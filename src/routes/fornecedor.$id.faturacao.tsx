@@ -1,15 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useDadosFornecedor } from "@/lib/dados";
 import { usePeriodo } from "./fornecedor.$id";
 import {
+  MESES,
   MESES_CURTOS,
   apagarFaturacao,
   euro,
   guardarFaturacao,
   listarFaturacao,
+  obterContasCertas,
+  guardarContasCertas,
 } from "@/lib/limpezas";
+
 
 export const Route = createFileRoute("/fornecedor/$id/faturacao")({
   head: () => ({
@@ -69,6 +73,35 @@ function Faturacao() {
 
   const totalAno = porMes.reduce<number>((s, v) => s + (v ?? 0), 0);
 
+  const { data: certas } = useQuery({
+    queryKey: ["contas-certas", id, ano],
+    queryFn: () => obterContasCertas(id, ano),
+  });
+
+  const [ateMes, setAteMes] = useState(0);
+  const [valorCertas, setValorCertas] = useState("");
+  const [notaCertas, setNotaCertas] = useState("");
+
+  useEffect(() => {
+    setAteMes(certas?.ate_mes ?? 0);
+    setValorCertas(certas?.valor ? String(certas.valor) : "");
+    setNotaCertas(certas?.nota ?? "");
+  }, [certas, ano, id]);
+
+  const gravarCertas = useMutation({
+    mutationFn: (dados: { ate_mes: number; valor: number; nota: string }) =>
+      guardarContasCertas(id, ano, dados),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["contas-certas", id, ano] }),
+  });
+
+  const guardar = () =>
+    gravarCertas.mutate({
+      ate_mes: ateMes,
+      valor: valorCertas.trim() === "" ? 0 : Number(valorCertas),
+      nota: notaCertas,
+    });
+
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
@@ -86,12 +119,69 @@ function Faturacao() {
         </div>
       </div>
 
+      <div className="mb-6 rounded-lg border border-border bg-card p-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <div>
+            <div className="text-[11px] font-bold uppercase text-muted-foreground">
+              Contas certas até
+            </div>
+            <select
+              value={ateMes}
+              onChange={(e) => setAteMes(Number(e.target.value))}
+              className="mt-1 cursor-pointer rounded-md border border-border bg-background px-2 py-1.5 text-sm font-semibold outline-none focus:border-brand"
+            >
+              <option value={0}>Nenhum mês</option>
+              {MESES.map((m, i) => (
+                <option key={m} value={i + 1}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <div className="text-[11px] font-bold uppercase text-muted-foreground">
+              Valor devolvido
+            </div>
+            <input
+              type="number"
+              step="0.01"
+              value={valorCertas}
+              onChange={(e) => setValorCertas(e.target.value)}
+              placeholder="0,00"
+              className="mt-1 w-32 rounded-md border border-border bg-background px-2 py-1.5 text-sm font-semibold outline-none focus:border-brand"
+            />
+          </div>
+          <div className="min-w-[200px] flex-1">
+            <div className="text-[11px] font-bold uppercase text-muted-foreground">Nota</div>
+            <input
+              value={notaCertas}
+              onChange={(e) => setNotaCertas(e.target.value)}
+              placeholder="Ex.: percentagem devolvida de Jan a Abr"
+              className="mt-1 w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm outline-none focus:border-brand"
+            />
+          </div>
+          <button
+            onClick={guardar}
+            disabled={gravarCertas.isPending}
+            className="cursor-pointer rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground hover:opacity-90"
+          >
+            Guardar
+          </button>
+        </div>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {ateMes > 0
+            ? `Contas certas até ${MESES[ateMes - 1]} de ${ano}.`
+            : "Ainda não há meses com contas certas neste ano."}
+        </p>
+      </div>
+
       {editar && (
         <p className="mb-4 text-sm text-muted-foreground">
           Escreva o total faturado de cada mês. Deixe em branco para voltar ao valor calculado
           pelos prédios.
         </p>
       )}
+
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {MESES_CURTOS.map((m, i) => {
@@ -147,6 +237,12 @@ function Faturacao() {
               <div className={atual ? "mt-1 font-bold text-brand" : "mt-1 font-bold"}>
                 {v === null ? "—" : euro(v)}
               </div>
+              {ateMes >= i + 1 && (
+                <div className="mt-1 text-[10px] font-bold uppercase text-transfer-strong">
+                  Conta certa
+                </div>
+              )}
+
             </button>
           );
         })}
