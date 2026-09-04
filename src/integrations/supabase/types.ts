@@ -123,6 +123,7 @@ export type Database = {
           fornecedor_id: string
           id: string
           morada: string
+          pagamento_padrao: string
           valor: number
         }
         Insert: {
@@ -132,6 +133,7 @@ export type Database = {
           fornecedor_id: string
           id?: string
           morada: string
+          pagamento_padrao?: string
           valor?: number
         }
         Update: {
@@ -141,6 +143,7 @@ export type Database = {
           fornecedor_id?: string
           id?: string
           morada?: string
+          pagamento_padrao?: string
           valor?: number
         }
         Relationships: [

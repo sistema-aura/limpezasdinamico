@@ -16,6 +16,7 @@ import {
   obterNota,
   removerPredio,
   type Estado,
+  type Pagamento,
 } from "@/lib/limpezas";
 
 type Busca = { ano: number | undefined; mes: number | undefined };
@@ -154,6 +155,7 @@ function PaginaFornecedor() {
   const [codigo, setCodigo] = useState("");
   const [morada, setMorada] = useState("");
   const [valor, setValor] = useState("");
+  const [pagamentoPadrao, setPagamentoPadrao] = useState<Pagamento>("transferencia");
 
   const adicionar = useMutation({
     mutationFn: () =>
@@ -162,16 +164,25 @@ function PaginaFornecedor() {
         codigo: codigo.trim(),
         morada: morada.trim(),
         valor: Number(valor.replace(",", ".")) || 0,
+        pagamento_padrao: pagamentoPadrao,
       }),
     onSuccess: () => {
       setCodigo("");
       setMorada("");
       setValor("");
+      setPagamentoPadrao("transferencia");
       queryClient.invalidateQueries({ queryKey: ["predios", id] });
     },
   });
 
   const anos = [hoje.getFullYear() + 1, hoje.getFullYear(), hoje.getFullYear() - 1, hoje.getFullYear() - 2];
+
+  function proximoEstado(atual: Estado, padrao: Pagamento): Estado {
+    const outro: Pagamento = padrao === "transferencia" ? "numerario" : "transferencia";
+    if (atual === "pendente") return padrao;
+    if (atual === padrao) return outro;
+    return "pendente";
+  }
 
   return (
     <Shell>
@@ -272,6 +283,19 @@ function PaginaFornecedor() {
               className="mt-1 w-full rounded-lg border border-border bg-secondary px-3 py-2 outline-none focus:ring-2 focus:ring-brand/20"
             />
           </div>
+          <div className="w-40">
+            <label className="ml-1 text-[10px] font-bold uppercase text-muted-foreground">
+              Pagamento normal
+            </label>
+            <select
+              value={pagamentoPadrao}
+              onChange={(e) => setPagamentoPadrao(e.target.value as Pagamento)}
+              className="mt-1 w-full rounded-lg border border-border bg-secondary px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand/20"
+            >
+              <option value="transferencia">Transferência</option>
+              <option value="numerario">Numerário</option>
+            </select>
+          </div>
           <button className="cursor-pointer rounded-lg bg-brand px-6 py-2 font-semibold text-brand-foreground shadow-sm transition-colors hover:bg-brand/90">
             Adicionar
           </button>
@@ -312,22 +336,24 @@ function PaginaFornecedor() {
                     />
                   </td>
                   <td className="px-6 py-4">
-                    <select
-                      value={l.estado}
-                      onChange={(e) =>
+                    <button
+                      onClick={() => {
+                        const proximo = proximoEstado(l.estado, l.predio.pagamento_padrao);
                         gravar.mutate({
                           predio_id: l.predio.id,
                           valor: l.valor,
-                          estado: e.target.value as Estado,
+                          estado: proximo,
                           observacoes: l.observacoes,
-                        })
-                      }
-                      className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-medium outline-none ${ESTADO_CLASSE[l.estado]}`}
+                        });
+                      }}
+                      title={`Clique para mudar. Normal deste prédio: ${ESTADO_LABEL[l.predio.pagamento_padrao].toLowerCase()}`}
+                      className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-medium transition hover:opacity-80 ${ESTADO_CLASSE[l.estado]}`}
                     >
-                      <option value="pendente">{ESTADO_LABEL.pendente}</option>
-                      <option value="transferencia">{ESTADO_LABEL.transferencia}</option>
-                      <option value="numerario">{ESTADO_LABEL.numerario}</option>
-                    </select>
+                      {ESTADO_LABEL[l.estado]}
+                      {l.estado === l.predio.pagamento_padrao && (
+                        <span className="ml-1 opacity-70">(normal)</span>
+                      )}
+                    </button>
                   </td>
                   <td className="px-6 py-4">
                     <input

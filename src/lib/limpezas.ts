@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type Estado = "pendente" | "transferencia" | "numerario";
+export type Pagamento = "transferencia" | "numerario";
+export type Estado = "pendente" | Pagamento;
 
 export const MESES = [
   "Janeiro",
@@ -49,6 +50,7 @@ export type Predio = {
   codigo: string;
   morada: string;
   valor: number;
+  pagamento_padrao: Pagamento;
   ativo: boolean;
 };
 
@@ -75,7 +77,7 @@ export async function listarFornecedores() {
 export async function listarPredios(fornecedorId: string) {
   const { data, error } = await supabase
     .from("predios")
-    .select("id, fornecedor_id, codigo, morada, valor, ativo")
+    .select("id, fornecedor_id, codigo, morada, valor, pagamento_padrao, ativo")
     .eq("fornecedor_id", fornecedorId)
     .eq("ativo", true)
     .order("codigo");
@@ -113,6 +115,7 @@ export async function criarPredio(input: {
   codigo: string;
   morada: string;
   valor: number;
+  pagamento_padrao: Pagamento;
 }) {
   const { error } = await supabase.from("predios").insert(input);
   if (error) throw error;
