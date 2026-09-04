@@ -193,5 +193,6 @@ function Predios() {
         </table>
       </div>
     </div>
+    </div>
   );
 }
