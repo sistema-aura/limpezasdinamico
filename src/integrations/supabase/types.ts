@@ -14,7 +14,145 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      fornecedores: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
+      limpezas: {
+        Row: {
+          ano: number
+          created_at: string
+          estado: string
+          fornecedor_id: string
+          id: string
+          mes: number
+          observacoes: string
+          predio_id: string
+          valor: number
+        }
+        Insert: {
+          ano: number
+          created_at?: string
+          estado?: string
+          fornecedor_id: string
+          id?: string
+          mes: number
+          observacoes?: string
+          predio_id: string
+          valor?: number
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          estado?: string
+          fornecedor_id?: string
+          id?: string
+          mes?: number
+          observacoes?: string
+          predio_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "limpezas_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "limpezas_predio_id_fkey"
+            columns: ["predio_id"]
+            isOneToOne: false
+            referencedRelation: "predios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notas_mensais: {
+        Row: {
+          ano: number
+          fornecedor_id: string
+          id: string
+          mes: number
+          texto: string
+        }
+        Insert: {
+          ano: number
+          fornecedor_id: string
+          id?: string
+          mes: number
+          texto?: string
+        }
+        Update: {
+          ano?: number
+          fornecedor_id?: string
+          id?: string
+          mes?: number
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notas_mensais_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      predios: {
+        Row: {
+          ativo: boolean
+          codigo: string
+          created_at: string
+          fornecedor_id: string
+          id: string
+          morada: string
+          valor: number
+        }
+        Insert: {
+          ativo?: boolean
+          codigo?: string
+          created_at?: string
+          fornecedor_id: string
+          id?: string
+          morada: string
+          valor?: number
+        }
+        Update: {
+          ativo?: boolean
+          codigo?: string
+          created_at?: string
+          fornecedor_id?: string
+          id?: string
+          morada?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "predios_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
