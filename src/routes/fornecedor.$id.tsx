@@ -95,14 +95,21 @@ function PaginaFornecedor() {
     () =>
       predios.map((p) => {
         const l = limpezas.find((x) => x.predio_id === p.id && x.mes === mes);
+        const estado = (l?.estado ?? "pendente") as Estado;
         return {
           predio: p,
           valor: l ? l.valor : p.valor,
-          estado: (l?.estado ?? "pendente") as Estado,
+          pagamento: p.pagamento_padrao,
+          pago: estado !== "pendente",
           observacoes: l?.observacoes ?? "",
         };
       }),
     [predios, limpezas, mes],
+  );
+
+  const porTransferir = useMemo(
+    () => linhas.filter((l) => l.pagamento === "transferencia" && !l.pago),
+    [linhas],
   );
 
   const totais = useMemo(() => {
@@ -112,9 +119,9 @@ function PaginaFornecedor() {
     let falta = 0;
     for (const l of linhas) {
       total += l.valor;
-      if (l.estado === "transferencia") transferencia += l.valor;
-      else if (l.estado === "numerario") numerario += l.valor;
-      else falta += l.valor;
+      if (!l.pago) falta += l.valor;
+      else if (l.pagamento === "transferencia") transferencia += l.valor;
+      else numerario += l.valor;
     }
     return { total, transferencia, numerario, falta };
   }, [linhas]);
