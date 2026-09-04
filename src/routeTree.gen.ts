@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmFaltaRouteImport } from './routes/em-falta'
 import { Route as FornecedorIdRouteImport } from './routes/fornecedor.$id'
 import { Route as FornecedorIdIndexRouteImport } from './routes/fornecedor.$id.index'
 import { Route as FornecedorIdFaturacaoRouteImport } from './routes/fornecedor.$id.faturacao'
@@ -20,6 +21,11 @@ import { Route as FornecedorIdTransferenciasRouteImport } from './routes/fornece
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmFaltaRoute = EmFaltaRouteImport.update({
+  id: '/em-falta',
+  path: '/em-falta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FornecedorIdRoute = FornecedorIdRouteImport.update({
@@ -56,6 +62,7 @@ const FornecedorIdTransferenciasRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/em-falta': typeof EmFaltaRoute
   '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
   '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
   '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/em-falta': typeof EmFaltaRoute
   '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
   '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
   '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
@@ -74,6 +82,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/em-falta': typeof EmFaltaRoute
   '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
   '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
   '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/em-falta'
     | '/fornecedor/$id'
     | '/fornecedor/$id/faturacao'
     | '/fornecedor/$id/observacoes'
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/em-falta'
     | '/fornecedor/$id/faturacao'
     | '/fornecedor/$id/observacoes'
     | '/fornecedor/$id/predios'
@@ -102,6 +113,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/em-falta'
     | '/fornecedor/$id'
     | '/fornecedor/$id/faturacao'
     | '/fornecedor/$id/observacoes'
@@ -112,6 +124,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmFaltaRoute: typeof EmFaltaRoute
   FornecedorIdRoute: typeof FornecedorIdRouteWithChildren
 }
 
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/em-falta': {
+      id: '/em-falta'
+      path: '/em-falta'
+      fullPath: '/em-falta'
+      preLoaderRoute: typeof EmFaltaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fornecedor/$id': {
@@ -191,6 +211,7 @@ const FornecedorIdRouteWithChildren = FornecedorIdRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmFaltaRoute: EmFaltaRoute,
   FornecedorIdRoute: FornecedorIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
