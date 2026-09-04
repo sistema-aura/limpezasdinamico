@@ -10,9 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmFaltaRouteImport } from './routes/em-falta'
+import { Route as FornecedoresRouteImport } from './routes/fornecedores'
 import { Route as FornecedorIdRouteImport } from './routes/fornecedor.$id'
 import { Route as FornecedorIdIndexRouteImport } from './routes/fornecedor.$id.index'
 import { Route as FornecedorIdFaturacaoRouteImport } from './routes/fornecedor.$id.faturacao'
+import { Route as FornecedorIdNumerarioRouteImport } from './routes/fornecedor.$id.numerario'
 import { Route as FornecedorIdObservacoesRouteImport } from './routes/fornecedor.$id.observacoes'
 import { Route as FornecedorIdPrediosRouteImport } from './routes/fornecedor.$id.predios'
 import { Route as FornecedorIdTransferenciasRouteImport } from './routes/fornecedor.$id.transferencias'
@@ -20,6 +23,16 @@ import { Route as FornecedorIdTransferenciasRouteImport } from './routes/fornece
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmFaltaRoute = EmFaltaRouteImport.update({
+  id: '/em-falta',
+  path: '/em-falta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FornecedoresRoute = FornecedoresRouteImport.update({
+  id: '/fornecedores',
+  path: '/fornecedores',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FornecedorIdRoute = FornecedorIdRouteImport.update({
@@ -35,6 +48,11 @@ const FornecedorIdIndexRoute = FornecedorIdIndexRouteImport.update({
 const FornecedorIdFaturacaoRoute = FornecedorIdFaturacaoRouteImport.update({
   id: '/faturacao',
   path: '/faturacao',
+  getParentRoute: () => FornecedorIdRoute,
+} as any)
+const FornecedorIdNumerarioRoute = FornecedorIdNumerarioRouteImport.update({
+  id: '/numerario',
+  path: '/numerario',
   getParentRoute: () => FornecedorIdRoute,
 } as any)
 const FornecedorIdObservacoesRoute = FornecedorIdObservacoesRouteImport.update({
@@ -56,8 +74,11 @@ const FornecedorIdTransferenciasRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/em-falta': typeof EmFaltaRoute
+  '/fornecedores': typeof FornecedoresRoute
   '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
   '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
+  '/fornecedor/$id/numerario': typeof FornecedorIdNumerarioRoute
   '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
   '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
   '/fornecedor/$id/transferencias': typeof FornecedorIdTransferenciasRoute
@@ -65,7 +86,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/em-falta': typeof EmFaltaRoute
+  '/fornecedores': typeof FornecedoresRoute
   '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
+  '/fornecedor/$id/numerario': typeof FornecedorIdNumerarioRoute
   '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
   '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
   '/fornecedor/$id/transferencias': typeof FornecedorIdTransferenciasRoute
@@ -74,8 +98,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/em-falta': typeof EmFaltaRoute
+  '/fornecedores': typeof FornecedoresRoute
   '/fornecedor/$id': typeof FornecedorIdRouteWithChildren
   '/fornecedor/$id/faturacao': typeof FornecedorIdFaturacaoRoute
+  '/fornecedor/$id/numerario': typeof FornecedorIdNumerarioRoute
   '/fornecedor/$id/observacoes': typeof FornecedorIdObservacoesRoute
   '/fornecedor/$id/predios': typeof FornecedorIdPrediosRoute
   '/fornecedor/$id/transferencias': typeof FornecedorIdTransferenciasRoute
@@ -85,8 +112,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/em-falta'
+    | '/fornecedores'
     | '/fornecedor/$id'
     | '/fornecedor/$id/faturacao'
+    | '/fornecedor/$id/numerario'
     | '/fornecedor/$id/observacoes'
     | '/fornecedor/$id/predios'
     | '/fornecedor/$id/transferencias'
@@ -94,7 +124,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/em-falta'
+    | '/fornecedores'
     | '/fornecedor/$id/faturacao'
+    | '/fornecedor/$id/numerario'
     | '/fornecedor/$id/observacoes'
     | '/fornecedor/$id/predios'
     | '/fornecedor/$id/transferencias'
@@ -102,8 +135,11 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/em-falta'
+    | '/fornecedores'
     | '/fornecedor/$id'
     | '/fornecedor/$id/faturacao'
+    | '/fornecedor/$id/numerario'
     | '/fornecedor/$id/observacoes'
     | '/fornecedor/$id/predios'
     | '/fornecedor/$id/transferencias'
@@ -112,6 +148,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmFaltaRoute: typeof EmFaltaRoute
+  FornecedoresRoute: typeof FornecedoresRoute
   FornecedorIdRoute: typeof FornecedorIdRouteWithChildren
 }
 
@@ -122,6 +160,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/em-falta': {
+      id: '/em-falta'
+      path: '/em-falta'
+      fullPath: '/em-falta'
+      preLoaderRoute: typeof EmFaltaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fornecedores': {
+      id: '/fornecedores'
+      path: '/fornecedores'
+      fullPath: '/fornecedores'
+      preLoaderRoute: typeof FornecedoresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/fornecedor/$id': {
@@ -143,6 +195,13 @@ declare module '@tanstack/react-router' {
       path: '/faturacao'
       fullPath: '/fornecedor/$id/faturacao'
       preLoaderRoute: typeof FornecedorIdFaturacaoRouteImport
+      parentRoute: typeof FornecedorIdRoute
+    }
+    '/fornecedor/$id/numerario': {
+      id: '/fornecedor/$id/numerario'
+      path: '/numerario'
+      fullPath: '/fornecedor/$id/numerario'
+      preLoaderRoute: typeof FornecedorIdNumerarioRouteImport
       parentRoute: typeof FornecedorIdRoute
     }
     '/fornecedor/$id/observacoes': {
@@ -171,6 +230,7 @@ declare module '@tanstack/react-router' {
 
 interface FornecedorIdRouteChildren {
   FornecedorIdFaturacaoRoute: typeof FornecedorIdFaturacaoRoute
+  FornecedorIdNumerarioRoute: typeof FornecedorIdNumerarioRoute
   FornecedorIdObservacoesRoute: typeof FornecedorIdObservacoesRoute
   FornecedorIdPrediosRoute: typeof FornecedorIdPrediosRoute
   FornecedorIdTransferenciasRoute: typeof FornecedorIdTransferenciasRoute
@@ -179,6 +239,7 @@ interface FornecedorIdRouteChildren {
 
 const FornecedorIdRouteChildren: FornecedorIdRouteChildren = {
   FornecedorIdFaturacaoRoute: FornecedorIdFaturacaoRoute,
+  FornecedorIdNumerarioRoute: FornecedorIdNumerarioRoute,
   FornecedorIdObservacoesRoute: FornecedorIdObservacoesRoute,
   FornecedorIdPrediosRoute: FornecedorIdPrediosRoute,
   FornecedorIdTransferenciasRoute: FornecedorIdTransferenciasRoute,
@@ -191,6 +252,8 @@ const FornecedorIdRouteWithChildren = FornecedorIdRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmFaltaRoute: EmFaltaRoute,
+  FornecedoresRoute: FornecedoresRoute,
   FornecedorIdRoute: FornecedorIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport

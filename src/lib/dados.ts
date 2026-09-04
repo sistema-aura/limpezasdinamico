@@ -55,6 +55,11 @@ export function useDadosFornecedor(id: string, ano: number, mes: number) {
     [linhas],
   );
 
+  const porNumerario = useMemo(
+    () => linhas.filter((l) => l.pagamento === "numerario" && !l.pago),
+    [linhas],
+  );
+
   const totais = useMemo(() => {
     let total = 0;
     let transferencia = 0;
@@ -69,7 +74,7 @@ export function useDadosFornecedor(id: string, ano: number, mes: number) {
     return { total, transferencia, numerario, falta };
   }, [linhas]);
 
-  return { fornecedor, predios, limpezas, linhas, porTransferir, totais };
+  return { fornecedor, predios, limpezas, linhas, porTransferir, porNumerario, totais };
 }
 
 export const ESTADO_CLASSE: Record<Estado, string> = {

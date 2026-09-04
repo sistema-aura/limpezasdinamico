@@ -186,3 +186,36 @@ export async function removerFornecedor(id: string) {
   const { error } = await supabase.from("fornecedores").delete().eq("id", id);
   if (error) throw error;
 }
+
+export type PredioComFornecedor = Predio & { fornecedor_nome: string };
+
+export async function listarTodosPredios() {
+  const { data, error } = await supabase
+    .from("predios")
+    .select(
+      "id, fornecedor_id, codigo, morada, valor, pagamento_padrao, ativo, fornecedores(nome)",
+    )
+    .eq("ativo", true)
+    .order("codigo");
+  if (error) throw error;
+  return (data ?? []).map((p) => {
+    const { fornecedores, ...resto } = p as typeof p & {
+      fornecedores: { nome: string } | null;
+    };
+    return {
+      ...resto,
+      valor: Number(resto.valor),
+      fornecedor_nome: fornecedores?.nome ?? "",
+    };
+  }) as PredioComFornecedor[];
+}
+
+export async function listarLimpezasDoMes(ano: number, mes: number) {
+  const { data, error } = await supabase
+    .from("limpezas")
+    .select("id, fornecedor_id, predio_id, ano, mes, valor, estado, observacoes")
+    .eq("ano", ano)
+    .eq("mes", mes);
+  if (error) throw error;
+  return (data ?? []).map((l) => ({ ...l, valor: Number(l.valor) })) as Limpeza[];
+}

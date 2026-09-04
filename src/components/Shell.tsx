@@ -8,6 +8,7 @@ const SECCOES = [
   { to: "/fornecedor/$id", label: "Limpezas do mês", exact: true },
   { to: "/fornecedor/$id/predios", label: "Prédios", exact: false },
   { to: "/fornecedor/$id/transferencias", label: "Transferências a fazer", exact: false },
+  { to: "/fornecedor/$id/numerario", label: "Numerário a pagar", exact: false },
   { to: "/fornecedor/$id/observacoes", label: "Observações", exact: false },
   { to: "/fornecedor/$id/faturacao", label: "Resumo de faturação", exact: false },
 ] as const;
@@ -76,6 +77,20 @@ export function Shell({ children }: { children: ReactNode }) {
               )}
             </div>
           )}
+          <div className="mt-3 space-y-1">
+            <Link
+              to="/em-falta"
+              className="block rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground data-[status=active]:bg-brand/10 data-[status=active]:font-medium data-[status=active]:text-brand"
+            >
+              Pagamentos em falta
+            </Link>
+            <Link
+              to="/fornecedores"
+              className="block rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground data-[status=active]:bg-brand/10 data-[status=active]:font-medium data-[status=active]:text-brand"
+            >
+              Listagem de fornecedores
+            </Link>
+          </div>
         </div>
 
         {atual && (
