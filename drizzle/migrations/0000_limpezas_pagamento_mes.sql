@@ -1,0 +1,1 @@
+ALTER TABLE public.limpezas ADD COLUMN IF NOT EXISTS pagamento text; ALTER TABLE public.limpezas ADD COLUMN IF NOT EXISTS pago_em timestamptz;
