@@ -82,7 +82,7 @@ export function ListaPagamentos({ id, metodo }: { id: string; metodo: Pagamento 
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-card p-6 shadow-sm print:hidden">
+      <section className="rounded-xl border border-border bg-card p-6 shadow-sm print:border-0 print:shadow-none">
         <h2 className="font-bold">Registo de pagos — {MESES[mes - 1]} {ano}</h2>
         {pagos.length === 0 ? (
           <p className="mt-2 text-sm text-muted-foreground">Ainda nenhum pago neste mês.</p>
@@ -94,7 +94,7 @@ export function ListaPagamentos({ id, metodo }: { id: string; metodo: Pagamento 
                 <th className="py-2">Morada</th>
                 <th className="py-2 text-right">Valor</th>
                 <th className="py-2">Pago em</th>
-                <th className="py-2"></th>
+                <th className="py-2 print:hidden"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -104,7 +104,7 @@ export function ListaPagamentos({ id, metodo }: { id: string; metodo: Pagamento 
                   <td className="py-2">{l.predio.morada}</td>
                   <td className="py-2 text-right font-semibold">{euro(l.valor)}</td>
                   <td className="py-2 text-muted-foreground">{dataPt(l.pagoEm)}</td>
-                  <td className="py-2 text-right">
+                  <td className="py-2 text-right print:hidden">
                     <button
                       onClick={() => marcar.mutate({ l, pago: false })}
                       className="cursor-pointer text-xs text-muted-foreground hover:text-destructive"
@@ -119,7 +119,7 @@ export function ListaPagamentos({ id, metodo }: { id: string; metodo: Pagamento 
                 <td className="py-2 text-right font-bold">
                   {euro(pagos.reduce((s, l) => s + l.valor, 0))}
                 </td>
-                <td colSpan={2} />
+                <td className="print:hidden" colSpan={2} />
               </tr>
             </tbody>
           </table>
