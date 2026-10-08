@@ -53,6 +53,7 @@ function EmFalta() {
           predio: p,
           valor: l ? l.valor : p.valor,
           pago: (l?.estado ?? "pendente") !== "pendente",
+          pagamento: l?.pagamento ?? p.pagamento_padrao,
         };
       })
       .filter((l) => !l.pago);
@@ -147,7 +148,7 @@ function EmFalta() {
                           </td>
                           <td className="py-2">{l.predio.morada}</td>
                           <td className="py-2 text-muted-foreground">
-                            {l.predio.pagamento_padrao === "transferencia"
+                            {l.pagamento === "transferencia"
                               ? "Transferência"
                               : "Numerário"}
                           </td>
