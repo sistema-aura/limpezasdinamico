@@ -120,6 +120,8 @@ export type Database = {
           id: string
           mes: number
           observacoes: string
+          pagamento: string | null
+          pago_em: string | null
           predio_id: string
           valor: number
         }
@@ -131,6 +133,8 @@ export type Database = {
           id?: string
           mes: number
           observacoes?: string
+          pagamento?: string | null
+          pago_em?: string | null
           predio_id: string
           valor?: number
         }
@@ -142,6 +146,8 @@ export type Database = {
           id?: string
           mes?: number
           observacoes?: string
+          pagamento?: string | null
+          pago_em?: string | null
           predio_id?: string
           valor?: number
         }

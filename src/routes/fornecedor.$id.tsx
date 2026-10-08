@@ -1,6 +1,6 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 import { Shell } from "@/components/Shell";
-import { MESES, MESES_CURTOS } from "@/lib/limpezas";
+import { MESES, MESES_CURTOS, periodoPorDefeito } from "@/lib/limpezas";
 import { useFornecedores } from "@/lib/dados";
 
 type Busca = { ano: number | undefined; mes: number | undefined };
@@ -32,10 +32,10 @@ export const Route = createFileRoute("/fornecedor/$id")({
 
 export function usePeriodo() {
   const busca = Route.useSearch();
-  const hoje = new Date();
+  const d = periodoPorDefeito();
   return {
-    ano: busca.ano ?? hoje.getFullYear(),
-    mes: busca.mes ?? hoje.getMonth() + 1,
+    ano: busca.ano ?? d.ano,
+    mes: busca.mes ?? d.mes,
   };
 }
 

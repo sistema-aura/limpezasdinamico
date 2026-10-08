@@ -12,7 +12,9 @@ export type Linha = {
   predio: Predio;
   valor: number;
   pagamento: Predio["pagamento_padrao"];
+  habitual: Predio["pagamento_padrao"];
   pago: boolean;
+  pagoEm: string | null;
   observacoes: string;
 };
 
@@ -42,8 +44,10 @@ export function useDadosFornecedor(id: string, ano: number, mes: number) {
         return {
           predio: p,
           valor: l ? l.valor : p.valor,
-          pagamento: p.pagamento_padrao,
+          pagamento: estado !== "pendente" ? estado : (l?.pagamento ?? p.pagamento_padrao),
+          habitual: p.pagamento_padrao,
           pago: estado !== "pendente",
+          pagoEm: l?.pago_em ?? null,
           observacoes: l?.observacoes ?? "",
         };
       }),
@@ -75,6 +79,20 @@ export function useDadosFornecedor(id: string, ano: number, mes: number) {
   }, [linhas]);
 
   return { fornecedor, predios, limpezas, linhas, porTransferir, porNumerario, totais };
+}
+
+/** Campos completos para gravar uma linha (preserva método do mês e data de pagamento). */
+export function dadosLinha(l: Linha, mudancas: Partial<{ valor: number; pago: boolean; pagamento: Linha["pagamento"]; observacoes: string }> = {}) {
+  const pago = mudancas.pago ?? l.pago;
+  const pagamento = mudancas.pagamento ?? l.pagamento;
+  return {
+    predio_id: l.predio.id,
+    valor: mudancas.valor ?? l.valor,
+    estado: (pago ? pagamento : "pendente") as Estado,
+    pagamento,
+    pago_em: pago ? (l.pago && l.pagoEm ? l.pagoEm : new Date().toISOString()) : null,
+    observacoes: mudancas.observacoes ?? l.observacoes,
+  };
 }
 
 export const ESTADO_CLASSE: Record<Estado, string> = {

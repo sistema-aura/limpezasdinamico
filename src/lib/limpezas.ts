@@ -63,7 +63,16 @@ export type Limpeza = {
   valor: number;
   estado: Estado;
   observacoes: string;
+  pagamento: Pagamento | null;
+  pago_em: string | null;
 };
+
+/** Mês a pagar por defeito: paga-se sempre o mês anterior. */
+export function periodoPorDefeito() {
+  const h = new Date();
+  const m = h.getMonth(); // 0-based => mês anterior em 1-based
+  return m === 0 ? { ano: h.getFullYear() - 1, mes: 12 } : { ano: h.getFullYear(), mes: m };
+}
 
 export async function listarFornecedores() {
   const { data, error } = await supabase
@@ -88,7 +97,7 @@ export async function listarPredios(fornecedorId: string) {
 export async function listarLimpezasDoAno(fornecedorId: string, ano: number) {
   const { data, error } = await supabase
     .from("limpezas")
-    .select("id, fornecedor_id, predio_id, ano, mes, valor, estado, observacoes")
+    .select("id, fornecedor_id, predio_id, ano, mes, valor, estado, observacoes, pagamento, pago_em")
     .eq("fornecedor_id", fornecedorId)
     .eq("ano", ano);
   if (error) throw error;
@@ -103,6 +112,8 @@ export async function guardarLimpeza(input: {
   valor: number;
   estado: Estado;
   observacoes: string;
+  pagamento?: Pagamento | null;
+  pago_em?: string | null;
 }) {
   const { error } = await supabase
     .from("limpezas")
@@ -213,7 +224,7 @@ export async function listarTodosPredios() {
 export async function listarLimpezasDoMes(ano: number, mes: number) {
   const { data, error } = await supabase
     .from("limpezas")
-    .select("id, fornecedor_id, predio_id, ano, mes, valor, estado, observacoes")
+    .select("id, fornecedor_id, predio_id, ano, mes, valor, estado, observacoes, pagamento, pago_em")
     .eq("ano", ano)
     .eq("mes", mes);
   if (error) throw error;
