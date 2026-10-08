@@ -8,6 +8,7 @@ import {
   listarLimpezasDoMes,
   listarTodosPredios,
 } from "@/lib/limpezas";
+import { periodoPorDefeito } from "@/lib/limpezas";
 
 export const Route = createFileRoute("/em-falta")({
   head: () => ({
@@ -32,8 +33,8 @@ export const Route = createFileRoute("/em-falta")({
 
 function EmFalta() {
   const hoje = new Date();
-  const [ano, setAno] = useState(hoje.getFullYear());
-  const [mes, setMes] = useState(hoje.getMonth() + 1);
+  const [ano, setAno] = useState(periodoPorDefeito().ano);
+  const [mes, setMes] = useState(periodoPorDefeito().mes);
 
   const { data: predios = [] } = useQuery({
     queryKey: ["predios-todos"],
