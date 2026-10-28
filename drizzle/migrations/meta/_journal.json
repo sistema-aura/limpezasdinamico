@@ -8,6 +8,13 @@
       "when": 1791473442692,
       "tag": "0000_limpezas_pagamento_mes",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793210330351,
+      "tag": "0001_despesas_lancadas",
+      "breakpoints": true
     }
   ]
 }

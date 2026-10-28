@@ -3,7 +3,14 @@ import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ESTADO_CLASSE, dadosLinha, useDadosFornecedor, type Linha } from "@/lib/dados";
 import { usePeriodo } from "./fornecedor.$id";
-import { euro, guardarLimpeza, obterNota, type Pagamento } from "@/lib/limpezas";
+import {
+  definirDespesaLancada,
+  euro,
+  guardarLimpeza,
+  obterDespesaLancada,
+  obterNota,
+  type Pagamento,
+} from "@/lib/limpezas";
 
 export const Route = createFileRoute("/fornecedor/$id/")({
   head: () => ({
@@ -39,8 +46,36 @@ function Limpezas() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["limpezas", id, ano] }),
   });
 
+  const { data: lancadaEm = null } = useQuery({
+    queryKey: ["despesa", id, ano, mes],
+    queryFn: () => obterDespesaLancada(id, ano, mes),
+  });
+  const lancar = useMutation({
+    mutationFn: (v: boolean) => definirDespesaLancada(id, ano, mes, v),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["despesa", id, ano, mes] }),
+  });
+
   return (
     <div className="space-y-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-4 shadow-sm">
+        <div className="text-sm">
+          <p className="font-semibold">Despesa lançada no programa</p>
+          <p className="text-muted-foreground">
+            {lancadaEm
+              ? `Lançada em ${new Date(lancadaEm).toLocaleString("pt-PT", { dateStyle: "short", timeStyle: "short" })}`
+              : "Ainda não lançada para este mês"}
+          </p>
+        </div>
+        <button
+          onClick={() => lancar.mutate(!lancadaEm)}
+          disabled={lancar.isPending}
+          className={`cursor-pointer rounded-full border px-4 py-1.5 text-sm font-medium transition hover:opacity-80 ${
+            lancadaEm ? ESTADO_CLASSE.transferencia : ESTADO_CLASSE.pendente
+          }`}
+        >
+          {lancadaEm ? "✓ Lançada (anular)" : "Marcar como lançada"}
+        </button>
+      </div>
       {nota.trim() && (
         <Link
           to="/fornecedor/$id/observacoes"

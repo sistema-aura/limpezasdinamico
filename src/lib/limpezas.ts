@@ -292,3 +292,26 @@ export async function guardarContasCertas(
   if (error) throw error;
 }
 
+
+export async function obterDespesaLancada(fornecedorId: string, ano: number, mes: number) {
+  const { data, error } = await supabase
+    .from("despesas_lancadas")
+    .select("lancada_em")
+    .eq("fornecedor_id", fornecedorId)
+    .eq("ano", ano)
+    .eq("mes", mes)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.lancada_em ?? null;
+}
+
+export async function definirDespesaLancada(fornecedorId: string, ano: number, mes: number, lancada: boolean) {
+  const q = lancada
+    ? supabase.from("despesas_lancadas").upsert(
+        { fornecedor_id: fornecedorId, ano, mes, lancada_em: new Date().toISOString() },
+        { onConflict: "fornecedor_id,ano,mes" },
+      )
+    : supabase.from("despesas_lancadas").delete().eq("fornecedor_id", fornecedorId).eq("ano", ano).eq("mes", mes);
+  const { error } = await q;
+  if (error) throw error;
+}
