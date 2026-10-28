@@ -55,6 +55,38 @@ export type Database = {
           },
         ]
       }
+      despesas_lancadas: {
+        Row: {
+          ano: number
+          fornecedor_id: string
+          id: string
+          lancada_em: string
+          mes: number
+        }
+        Insert: {
+          ano: number
+          fornecedor_id: string
+          id?: string
+          lancada_em?: string
+          mes: number
+        }
+        Update: {
+          ano?: number
+          fornecedor_id?: string
+          id?: string
+          lancada_em?: string
+          mes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "despesas_lancadas_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       faturacao_mensal: {
         Row: {
           ano: number
