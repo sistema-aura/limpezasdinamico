@@ -15,6 +15,13 @@
       "when": 1793210330351,
       "tag": "0001_despesas_lancadas",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793210463048,
+      "tag": "0002_limpezas_lancada_em",
+      "breakpoints": true
     }
   ]
 }

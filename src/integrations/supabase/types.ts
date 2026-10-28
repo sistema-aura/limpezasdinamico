@@ -150,6 +150,7 @@ export type Database = {
           estado: string
           fornecedor_id: string
           id: string
+          lancada_em: string | null
           mes: number
           observacoes: string
           pagamento: string | null
@@ -163,6 +164,7 @@ export type Database = {
           estado?: string
           fornecedor_id: string
           id?: string
+          lancada_em?: string | null
           mes: number
           observacoes?: string
           pagamento?: string | null
@@ -176,6 +178,7 @@ export type Database = {
           estado?: string
           fornecedor_id?: string
           id?: string
+          lancada_em?: string | null
           mes?: number
           observacoes?: string
           pagamento?: string | null

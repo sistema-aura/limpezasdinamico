@@ -65,6 +65,7 @@ export type Limpeza = {
   observacoes: string;
   pagamento: Pagamento | null;
   pago_em: string | null;
+  lancada_em: string | null;
 };
 
 /** Mês a pagar por defeito: paga-se sempre o mês anterior. */
@@ -97,7 +98,7 @@ export async function listarPredios(fornecedorId: string) {
 export async function listarLimpezasDoAno(fornecedorId: string, ano: number) {
   const { data, error } = await supabase
     .from("limpezas")
-    .select("id, fornecedor_id, predio_id, ano, mes, valor, estado, observacoes, pagamento, pago_em")
+    .select("id, fornecedor_id, predio_id, ano, mes, valor, estado, observacoes, pagamento, pago_em, lancada_em")
     .eq("fornecedor_id", fornecedorId)
     .eq("ano", ano);
   if (error) throw error;
@@ -114,6 +115,7 @@ export async function guardarLimpeza(input: {
   observacoes: string;
   pagamento?: Pagamento | null;
   pago_em?: string | null;
+  lancada_em?: string | null;
 }) {
   const { error } = await supabase
     .from("limpezas")
@@ -224,7 +226,7 @@ export async function listarTodosPredios() {
 export async function listarLimpezasDoMes(ano: number, mes: number) {
   const { data, error } = await supabase
     .from("limpezas")
-    .select("id, fornecedor_id, predio_id, ano, mes, valor, estado, observacoes, pagamento, pago_em")
+    .select("id, fornecedor_id, predio_id, ano, mes, valor, estado, observacoes, pagamento, pago_em, lancada_em")
     .eq("ano", ano)
     .eq("mes", mes);
   if (error) throw error;
@@ -293,25 +295,3 @@ export async function guardarContasCertas(
 }
 
 
-export async function obterDespesaLancada(fornecedorId: string, ano: number, mes: number) {
-  const { data, error } = await supabase
-    .from("despesas_lancadas")
-    .select("lancada_em")
-    .eq("fornecedor_id", fornecedorId)
-    .eq("ano", ano)
-    .eq("mes", mes)
-    .maybeSingle();
-  if (error) throw error;
-  return data?.lancada_em ?? null;
-}
-
-export async function definirDespesaLancada(fornecedorId: string, ano: number, mes: number, lancada: boolean) {
-  const q = lancada
-    ? supabase.from("despesas_lancadas").upsert(
-        { fornecedor_id: fornecedorId, ano, mes, lancada_em: new Date().toISOString() },
-        { onConflict: "fornecedor_id,ano,mes" },
-      )
-    : supabase.from("despesas_lancadas").delete().eq("fornecedor_id", fornecedorId).eq("ano", ano).eq("mes", mes);
-  const { error } = await q;
-  if (error) throw error;
-}

@@ -4,10 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ESTADO_CLASSE, dadosLinha, useDadosFornecedor, type Linha } from "@/lib/dados";
 import { usePeriodo } from "./fornecedor.$id";
 import {
-  definirDespesaLancada,
   euro,
   guardarLimpeza,
-  obterDespesaLancada,
   obterNota,
   type Pagamento,
 } from "@/lib/limpezas";
@@ -46,36 +44,8 @@ function Limpezas() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["limpezas", id, ano] }),
   });
 
-  const { data: lancadaEm = null } = useQuery({
-    queryKey: ["despesa", id, ano, mes],
-    queryFn: () => obterDespesaLancada(id, ano, mes),
-  });
-  const lancar = useMutation({
-    mutationFn: (v: boolean) => definirDespesaLancada(id, ano, mes, v),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["despesa", id, ano, mes] }),
-  });
-
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-4 shadow-sm">
-        <div className="text-sm">
-          <p className="font-semibold">Despesa lançada no programa</p>
-          <p className="text-muted-foreground">
-            {lancadaEm
-              ? `Lançada em ${new Date(lancadaEm).toLocaleString("pt-PT", { dateStyle: "short", timeStyle: "short" })}`
-              : "Ainda não lançada para este mês"}
-          </p>
-        </div>
-        <button
-          onClick={() => lancar.mutate(!lancadaEm)}
-          disabled={lancar.isPending}
-          className={`cursor-pointer rounded-full border px-4 py-1.5 text-sm font-medium transition hover:opacity-80 ${
-            lancadaEm ? ESTADO_CLASSE.transferencia : ESTADO_CLASSE.pendente
-          }`}
-        >
-          {lancadaEm ? "✓ Lançada (anular)" : "Marcar como lançada"}
-        </button>
-      </div>
       {nota.trim() && (
         <Link
           to="/fornecedor/$id/observacoes"
@@ -117,6 +87,7 @@ function Limpezas() {
               <th className="px-6 py-4 text-right">Valor</th>
               <th className="px-6 py-4">Pagamento (este mês)</th>
               <th className="px-6 py-4">Estado</th>
+              <th className="px-6 py-4">No programa</th>
               <th className="px-6 py-4">Observações</th>
             </tr>
           </thead>
@@ -166,6 +137,17 @@ gravar.mutate({ l, m: { pago: !l.pago } })
                   </button>
                 </td>
                 <td className="px-6 py-4">
+                  <button
+                    onClick={() => gravar.mutate({ l, m: { lancada: !l.lancadaEm } })}
+                    title={l.lancadaEm ? `Lançada em ${new Date(l.lancadaEm).toLocaleString("pt-PT", { dateStyle: "short", timeStyle: "short" })}` : "Marcar como lançada no programa"}
+                    className={`cursor-pointer whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium transition hover:opacity-80 ${
+                      l.lancadaEm ? ESTADO_CLASSE.transferencia : "border-border text-muted-foreground"
+                    }`}
+                  >
+                    {l.lancadaEm ? "✓ Lançada" : "Por lançar"}
+                  </button>
+                </td>
+                <td className="px-6 py-4">
                   <div className="flex items-center gap-1">
                   {l.observacoes.trim() && (
                     <span title="Tem observações" className="h-2 w-2 shrink-0 rounded-full bg-brand" />
@@ -186,7 +168,7 @@ gravar.mutate({ l, m: { observacoes: e.target.value } });
             ))}
             {linhas.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-10 text-center text-muted-foreground">
+                <td colSpan={7} className="px-6 py-10 text-center text-muted-foreground">
                   Ainda não há prédios. Adicione na secção "Prédios".
                 </td>
               </tr>
